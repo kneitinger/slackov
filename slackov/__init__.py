@@ -32,7 +32,7 @@ def main():
 
     markov = Markoff(args.file)
     if args.verbose and args.file:
-        print('Markoff initialized with file: ' + args.file + '\n\nBots:')
+        print('Markoff initialized with file: ' + args.file)
         
     try:
 
