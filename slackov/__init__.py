@@ -14,7 +14,7 @@ def parse_args():
     parser.add_argument('--verbose','-v',
             help='Log events to stdout', action='store_true')
     parser.add_argument('--file','-f',
-            required=False, type=str, nargs=1, default=None,
+            required=False, type=str, nargs='?', default=None,
             help='Recieved phrases backup file')
     args = parser.parse_args()
     return args
