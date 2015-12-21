@@ -34,16 +34,6 @@ def main():
     if args.verbose and args.file:
         print('Markoff initialized with file: ' + args.file + '\n\nBots:')
         
-
-    # Compile list of other bots to avoid processing their text
-    bots = []
-    for user in s.loaded_users:
-        if user['is_bot']:
-            bots.append(user['id'])
-            if args.verbose:
-                print(user['id'])
-
-    
     try:
 
         while(1):
@@ -61,7 +51,7 @@ def main():
                     print('Sent: ' + response + '\n\tto: ' + channel)
 
             # Add text to markoff data structure if message is from a human
-            elif msg_user not in bots:
+            elif 'subtype' not in event.event:
                 markov.add_vocab(body)
                 if args.verbose:
                     print('Adding text: ' + body)
