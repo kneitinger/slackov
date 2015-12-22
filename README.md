@@ -7,17 +7,17 @@ A Slack bot that uses Markov chains to learn to speak like a generic member of y
 
 Manual method:
 
-'''
+```
 $ git clone https://github.com/kneitinger/slackov.git
 $ cd slackov
 $ sudo python setup.py install
-'''
+```
 
  Automatic method with 'pip':
 
-'''
+```
 $ sudo pip install slackov
-'''
+```
 
 ## Usage
 
