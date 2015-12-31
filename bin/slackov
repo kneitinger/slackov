@@ -1,15 +1,36 @@
 #!/usr/bin/env python
 
-import sys
+from slackov import Slackov
+import argparse
+import time
 
-try:
-    from slackov import main
-except ImportError as e:
-    print(e)
-else:
-    try:
-        main()
-    except KeyboardInterrupt:
-        pass
-    sys.exit(0)
+def parse_args():
+    parser = argparse.ArgumentParser(description=
+        'A Slack bot that uses Markov chains to learn to speak like a generic \
+        member of your team')
+    parser.prog = 'slackov'
+    parser.add_argument('--token','-t',
+            required=True, type=str, nargs=1, help='Slack RTM API Token')
+    parser.add_argument('--verbose','-v',
+            help='Log events to stdout', action='store_true')
+    parser.add_argument('--file','-f',
+            required=False, type=str, nargs='?', default=None,
+            help='Recieved phrases backup file')
+    args = parser.parse_args()
+    return args
 
+def main():
+    args = parse_args()
+
+    s = Slackov(args.token[0], args.file)
+
+    while(1):
+        try:
+            s.poll_events()
+            time.sleep(0.25)
+        except KeyboardInterrupt:
+            print('now exiting.')
+            break
+
+if __name__ == "__main__":
+    main()

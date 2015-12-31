@@ -10,7 +10,7 @@ config = {
     'url': 'https://github.com/kneitinger/slackov',
     'author_email': 'kneit@pdx.edu',
     'version': '0.1',
-    'install_requires': ['slacksocket','markoff'],
+    'install_requires': ['slackclient','markoff'],
     'packages': ['slackov'],
     'scripts': ['bin/slackov'],
     'name': 'slackov',

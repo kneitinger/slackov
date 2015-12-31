@@ -1,67 +1,38 @@
-#!/usr/bin/env python
-
-from slacksocket import SlackSocket
+from slackclient import SlackClient
 from markoff import Markoff
-import argparse
+from pprint import pprint
 
-def parse_args():
-    parser = argparse.ArgumentParser(description=
-        'A Slack bot that uses Markov chains to learn to speak like a generic \
-        member of your team')
-    parser.prog = 'slackov'
-    parser.add_argument('--token','-t',
-            required=True, type=str, nargs=1, help='Slack RTM API Token')
-    parser.add_argument('--verbose','-v',
-            help='Log events to stdout', action='store_true')
-    parser.add_argument('--file','-f',
-            required=False, type=str, nargs='?', default=None,
-            help='Recieved phrases backup file')
-    args = parser.parse_args()
-    return args
+class Slackov:
+    def __init__(self, token, file=None, quiet=False):
+        try:
+            self._sc = SlackClient(token)
+            self._sc.rtm_connect()
+        except Exception:
+            print('Slack API error. Exiting.')
+            exit(1)
 
-def main():
-    args = parse_args()
-    api_token = args.token
+        self.name = self._sc.server.login_data['self']['id']
+        print(self.name)
+        print(self._sc.api_call("api.test"))
+        self._markoff = Markoff(file)
 
-    try:
-        s = SlackSocket(api_token,translate=False,event_filters=['message'])
-    except Exception:
-        print('SlackAPI Error: exiting.')
-        exit(1)
-    print('Connected to team: ' + s.team)
+    def poll_events(self):
+        events = self._sc.rtm_read()
+        for e in events:
+            # Ignore messages that slackov sends
+            if 'type' in e:
+                self.process_event(e)
 
-    markov = Markoff(args.file)
-    if args.verbose and args.file:
-        print('Markoff initialized with file: ' + args.file)
+    def process_event(self, event):
+        if event['type'] == 'message' and 'subtype' not in event:
+            body = event['text']
         
-    try:
-
-        while(1):
-            # Useful message info
-            event = s.get_event()
-            channel = event.event['channel']
-            body = event.event['text']
-            msg_user = event.event['user']
-
-            # If slackov is addressed
-            if s.user in body:
-                response = markov.gen_sentence()
-                s.send_msg(response,channel_id=channel,confirm=False)
-                if args.verbose:
-                    print('Sent: ' + response + '\n\tto: ' + channel)
-
-            # Add text to markoff data structure if message is from a human
-            elif 'subtype' not in event.event:
-                markov.add_vocab(body)
-                if args.verbose:
-                    print('Adding text: ' + body)
-
-    except Exception:
-        print("other")
-    except KeyboardInterrupt:
-        print('Keyboard Interrupt: quiting.')
-    finally:
-        s.close()
-
-if __name__ == "__main__":
-    main()
+            if self.name in body:
+                msg = ''
+                while len(msg) == 0:
+                    msg = self._markoff.gen_sentence()
+                print('Sending : ' + msg)
+                self._sc.rtm_send_message(event['channel'], msg)
+            else:
+                print('Adding vocab: ' + body)
+                self._markoff.add_vocab(body)
