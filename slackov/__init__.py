@@ -1,6 +1,5 @@
 from slackclient import SlackClient
 from markoff import Markoff
-from pprint import pprint
 
 class Slackov:
     def __init__(self, token, file=None, quiet=False):
@@ -12,8 +11,7 @@ class Slackov:
             exit(1)
 
         self.name = self._sc.server.login_data['self']['id']
-        print(self.name)
-        print(self._sc.api_call("api.test"))
+        print('Connected as: ' + self.name)
         self._markoff = Markoff(file)
 
     def poll_events(self):
