@@ -9,10 +9,11 @@ config = {
     'author': 'Kyle J. Kneitinger',
     'url': 'https://github.com/kneitinger/slackov',
     'author_email': 'kneit@pdx.edu',
-    'version': '0.2',
+    'version': '0.2.1',
     'install_requires': ['slackclient','markoff'],
     'scripts': ['bin/slackov'],
     'name': 'slackov',
+    'packages': ['slackov'],
     'license' : 'BSD',
     'classifiers' : [
         'Development Status :: 4 - Beta',
