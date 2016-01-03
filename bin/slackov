@@ -22,7 +22,7 @@ def parse_args():
 def main():
     args = parse_args()
 
-    s = Slackov(args.token[0], args.file)
+    s = Slackov(args.token[0], args.file, args.verbose)
 
     while(1):
         try:
